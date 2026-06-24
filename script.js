@@ -10,19 +10,21 @@ const curtoBt = document.querySelector('.app__card-button--curto')
 const longoBt = document.querySelector('.app__card-button--longo')
 
 focoBt.addEventListener('click', () => {
-    html.setAttribute('data-contexto', 'foco')
-    banner.setAttribute('src', '/imagens/foco.png')
+    alterarContexto('foco')
 })
 
 curtoBt.addEventListener('click', () => {
-    html.setAttribute('data-contexto', 'descanso-curto')
-    banner.setAttribute('src', '/imagens/descanso-curto.png')
+    alterarContexto('descanso-curto')
 })
 
 longoBt.addEventListener('click', () => {
-    html.setAttribute('data-contexto', 'descanso-longo')
-    banner.setAttribute('src', '/imagens/descanso-longo.png')
+    alterarContexto('descanso-longo')
 })
+
+function alterarContexto() {
+    html.setAttribute('data-contexto', contexto)
+    banner.setAttribute('src', `/imagens/${contexto}.png`)
+}
 
 const duracaoFoco = 1500; 
 const duracaoDescansoCurto = 300; 
