@@ -17,6 +17,11 @@ const audioTempoFinalizado = new Audio('./sons/beep.mp3')
 
 let tempoDecorridoEmSegundos = 1500
 let intervaloId = null
+let cicloPomodoro = 0;
+// 0 = foco
+// 1 = descanso curto
+// 2 = foco
+// 3 = descanso longo
 
 musica.loop = true
 
@@ -29,21 +34,24 @@ musicaFocoInput.addEventListener('change', () => {
 })
 
 focoBt.addEventListener('click', () => {
-    tempoDecorridoEmSegundos = 1500
-    alterarContexto('foco')
-    focoBt.classList.add('active')
+    tempoDecorridoEmSegundos = 1500;
+    alterarContexto('foco');
+    focoBt.classList.add('active');
+    cicloPomodoro = 0;
 })
 
 curtoBt.addEventListener('click', () => {
-    tempoDecorridoEmSegundos = 300
-    alterarContexto('descanso-curto')
-    curtoBt.classList.add('active')
+    tempoDecorridoEmSegundos = 300;
+    alterarContexto('descanso-curto');
+    curtoBt.classList.add('active');
+    cicloPomodoro = 1;
 })
 
 longoBt.addEventListener('click', () => {
-    tempoDecorridoEmSegundos = 900
-    alterarContexto('descanso-longo')
-    longoBt.classList.add('active')
+    tempoDecorridoEmSegundos = 900;
+    alterarContexto('descanso-longo');
+    longoBt.classList.add('active');
+    cicloPomodoro = 3;
 })
 
 function alterarContexto(contexto) {
@@ -75,15 +83,18 @@ function alterarContexto(contexto) {
 }
 
 const contagemRegressiva = () => {
-    if(tempoDecorridoEmSegundos <= 0){
-        audioTempoFinalizado.play()
-        alert('Tempo finalizado!')
-        zerar()
-        return
+    if (tempoDecorridoEmSegundos <= 0) {
+        audioTempoFinalizado.play();
+
+        zerar(); // para o intervalo atual
+
+        proximoCiclo(); // inicia o próximo ciclo automaticamente
+
+        return;
     }
-    tempoDecorridoEmSegundos -= 1
-    console.log('Temporizador: ' + tempoDecorridoEmSegundos)
-    mostrarTempo()
+
+    tempoDecorridoEmSegundos -= 1;
+    mostrarTempo();
 }
 
 startPauseBt.addEventListener('click', iniciarOuPausar)
@@ -113,3 +124,42 @@ function mostrarTempo() {
 }
 
 mostrarTempo()
+
+function proximoCiclo() {
+    switch(cicloPomodoro) {
+        case 0:
+            // Foco -> Descanso curto
+            tempoDecorridoEmSegundos = 300;
+            alterarContexto('descanso-curto');
+            curtoBt.classList.add('active');
+            cicloPomodoro = 1;
+            break;
+
+        case 1:
+            // Descanso curto -> Foco
+            tempoDecorridoEmSegundos = 1500;
+            alterarContexto('foco');
+            focoBt.classList.add('active');
+            cicloPomodoro = 2;
+            break;
+
+        case 2:
+            // Foco -> Descanso longo
+            tempoDecorridoEmSegundos = 900;
+            alterarContexto('descanso-longo');
+            longoBt.classList.add('active');
+            cicloPomodoro = 3;
+            break;
+
+        case 3:
+            // Descanso longo -> Foco
+            tempoDecorridoEmSegundos = 1500;
+            alterarContexto('foco');
+            focoBt.classList.add('active');
+            cicloPomodoro = 0;
+            break;
+    }
+
+    mostrarTempo();
+    iniciarOuPausar(); // inicia automaticamente o próximo ciclo
+}
